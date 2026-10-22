@@ -2,8 +2,14 @@
 
 rm(list = ls())
 
-pacman::p_load(tidyverse, hrbrthemes, colorspace, ggtext, readxl,
-               patchwork, scales)
+pacman::p_load(tidyverse,
+               hrbrthemes,
+               colorspace,
+               ggtext,
+               readxl,
+               patchwork,
+               scales,
+               ggh4x)
 
 # RESULTS -----------------------------------------------------------------
 
@@ -46,7 +52,7 @@ model_means <- read_excel(
   sheet = 3,
   skip = 3
 ) |>
-  rename_with( ~ logics, c(2:7)) |>
+  rename_with(~ logics, c(2:7)) |>
   rename(value = 1) |>
   slice(8)  |>
   pivot_longer(!value, names_to = "logic", values_to = "prediction") |>
@@ -59,7 +65,7 @@ scale_estimate <- read_excel(
   sheet = 3,
   skip = 3
 ) |>
-  rename_with( ~ logics, c(2:7)) |>
+  rename_with(~ logics, c(2:7)) |>
   rename(value = 1) |>
   slice(-8)  |>
   pivot_longer(!value, names_to = "logic", values_to = "prediction") |>
@@ -76,7 +82,12 @@ logic_labs <- c(
   "Assimilationist"           = "<img src='./data/misc/class5_share.png' width='40.5'/><br>Assimilationist"
 )
 
-note <- "<span style='color: #9c9c9c; font-size: 11pt;'>(Response Probabilities)</span>"
+note <- "<span style='color: grey40; font-size: 13pt;'>(Along 1-7 Scale of Americanness)</span>"
+
+design <- "
+  AABBCC
+  #DDEE#
+"
 
 top_panel <-
   scale_estimate |>
@@ -86,9 +97,9 @@ top_panel <-
     fill = prediction,
     label = formatC(prediction, format = "f", digits = 2)
   )) +
-  facet_wrap(
+  facet_manual(
     ~ logic,
-    nrow = 1,
+    design = design,
     scales = "free_y",
     labeller = labeller(logic = logic_labs)
   ) +
@@ -97,7 +108,7 @@ top_panel <-
     if_else(farver::decode_colour(fill, to = "lab")[, "l"] > 60, "grey20", "white")
   ))) +
   scale_fill_continuous_sequential(palette = "SunsetDark") +
-  labs(tag = "A", x = paste("**Americanness Scale Level**", note), y = "") +
+  labs(x = "", y = "") +
   theme_ipsum(base_family = "Montserrat",
               grid = "",
               axis_title_size = 15) +
@@ -157,10 +168,7 @@ logic_labs2 <- c(
 
 bottom_panel <-
   marginal_means |>
-  mutate(
-    logic = fct_inorder(logic),
-    attribute = fct_inorder(attribute)
-  ) |>
+  mutate(logic = fct_inorder(logic), attribute = fct_inorder(attribute)) |>
   ggplot(aes(
     x = prediction,
     y = level |> fct_inorder() |> fct_rev(),
@@ -191,7 +199,7 @@ bottom_panel <-
     colour = "white"
   ) +
   scale_x_continuous(labels = label_thin()) +
-  labs(tag = "B", x = "Marginal Means", y = "") +
+  labs(x = "", y = "") +
   theme_ipsum(base_family = "Montserrat",
               grid = "XY",
               grid_col = "grey85") +
@@ -226,30 +234,48 @@ bottom_panel <-
 
 # COMBINE! ----------------------------------------------------------------
 
-# canvas width
-W <- 19
+top_w <- 10.5
+top_h <- 4.25
+bot_w <- 11.75
+bot_h <- 8.4
 
-pad  <- (W - 11.75) / 2
-
-trim <- 25
-
+W       <- 12.5
+trim    <- 28
 trim_in <- trim / 72.27
+pad_pt  <- (W - top_w) / 2 * 72.27
+tag_pt  <- 22
 
-top <- top_panel + theme(plot.margin = margin(30, 30, 30 - trim, 30))
+top <- top_panel + labs(title = NULL) +
+  theme(plot.margin = margin(30, 30 + pad_pt, 30 - trim, 30 + pad_pt))
 
-bottom <- bottom_panel + theme(plot.margin = margin(30 - trim, 30, 30, 30))
+bottom <- bottom_panel + labs(title = NULL) +
+  theme(plot.margin = margin(tag_pt, 30, 30, 30))
 
-combined <- wrap_elements(full = top) /
-  (plot_spacer() + wrap_elements(full = bottom) + plot_spacer() +
-     plot_layout(widths = c(pad, 11.75, pad))) +
-  plot_layout(heights = c(2.85 - trim_in, 9.5 - trim_in))
+tags <- c(
+  paste("**A:**&emsp;**Response Probabilities**", note),
+  "**B:**&emsp;**Marginal Means**"
+)
+
+combined <- wrap_elements(full = top) / wrap_elements(full = bottom) +
+  plot_layout(heights = c(top_h - trim_in, bot_h - trim_in)) +
+  plot_annotation(tag_levels = list(tags)) &
+  theme(
+    plot.tag.location = "plot",
+    plot.tag.position = c((30 / 72.27) / W, 1),
+    plot.tag = element_markdown(
+      family = "Montserrat",
+      size = 20,
+      hjust = 0,
+      vjust = 1
+    )
+  )
+
 
 ggsave(
   "./figures_tables/figure2.png",
   combined,
-  width = 19.35,
-  height = 2.25 + 9.5 - 2 * trim_in,
-  dpi = 1000,
+  width  = W,
+  height = top_h + bot_h - 2 * trim_in,
+  dpi    = 1000,
   device = grDevices::png
 )
-

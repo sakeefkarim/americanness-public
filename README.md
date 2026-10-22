@@ -1,5 +1,7 @@
 # What Is Americanness?
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23562576.svg)](https://doi.org/10.5281/zenodo.23562576)
+
 Replication materials for *What Is Americanness? Polarization and Consensus in Cultural Logics of the American Creed.*
 
 ## Requirements
@@ -12,17 +14,40 @@ Replication materials for *What Is Americanness? Polarization and Consensus in C
 
 ## Getting Started
 
-Fire up `americanness.Rproj` on your machine. Then, restore the project library:
+Clone this repository via [GitHub](https://github.com/sakeefkarim/americanness-public/) or download/unzip the archived version via [Zenodo](https://doi.org/10.5281/zenodo.23562576). Then, (i) fire up `americanness.Rproj` on your machine; before (ii) restoring the project library by executing the code embedded below:
 
 ```r
 renv::restore()
 ```
 
-This installs the *specific* package versions encoded in `renv.lock`, including [`gssr`](https://kjhealy.github.io/gssr/) from r-universe. 
+This installs the *specific* package versions encoded in `renv.lock`, including [`gssr`](https://kjhealy.github.io/gssr/) from r-universe.
+
+## Repository Structure
+
+```
+americanness/
+├── americanness.Rproj
+├── renv.lock
+├── LICENSE                        MIT (code)
+├── code/
+│   ├── 01_main_analysis/          LCR and three-step models
+│   ├── 02_main_outputs/           Figures 1–4, Table 1
+│   └── 03_appendix/
+│       ├── 01_supplementary_analyses/
+│       └── 02_supplementary_outputs/
+├── data/
+│   ├── LICENSE                    CC0 1.0 (data)
+│   ├── experimental data/         Analytic survey data
+│   ├── latent gold data/
+│   │   ├── 1_results_xlsx/        Latent GOLD output (main; appendix/)
+│   │   └── 2_supplementary_data/  Posteriors for alternative models
+│   └── misc/                      Bells and whistles for figures; estimated marginal means data
+└── figures_tables/                Main outputs; appendix outputs in appendix/
+```
 
 ## Data
 
-Conjoint experiment fielded in 2022: 3,161 U.S. respondents, eight profiles each (25,288 ratings).
+Conjoint experiment fielded in 2022: 3,161 American respondents, eight profiles each (25,288 ratings).
 
 | File (`data/experimental data/`) | Contents |
 |---|---|
@@ -65,7 +90,7 @@ All intermediate files are included. Ergo, each step runs on its own.
 |---|---|---|
 | 1 | `01_base_lcr_varying_k_1_to_10.lgs` | Fit statistics, 1–10 latent segments |
 | 2 | `02_basic_conjoint_and_gss_comp.R` | `marginal_means_data.RData`; pulls in the [2024 GSS](https://gss.norc.org), too |
-| 3 | `03_alternative_lcrs.lgs` | Posteriors: six-class + three-class random-effect models  |
+| 3 | `03_alternative_lcrs.lgs` | Posteriors: six-class + three-class random-effect models |
 | 4 | `04_lg_inputs_alt_three_step.R` | Three-step inputs for the alternative models |
 | 5 | `05_three_step_six_class.lgs` | Step 3, six-class solution |
 | 6 | `06_three_step_re.lgs` | Step 3, three-class random-effects solution |
@@ -80,7 +105,7 @@ All intermediate files are included. Ergo, each step runs on its own.
 
 Outputs are written to `figures_tables/`. Most tables were refined in LaTeX (colour schemes; quota targets for Table A1, etc.).
 
-## Licensing
+## Licenses
 
 | Component | Licence |
 |---|---|
