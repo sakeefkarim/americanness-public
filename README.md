@@ -1,6 +1,6 @@
 # What Is Americanness?
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23562576.svg)](https://doi.org/10.5281/zenodo.23562576)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23578059.svg)](https://doi.org/10.5281/zenodo.23578059)
 
 Replication materials for *What Is Americanness? Polarization and Consensus in Cultural Logics of the American Creed.*
 
