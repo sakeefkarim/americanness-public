@@ -1,0 +1,43 @@
+//LG6.1//
+version = 6.1
+infile 'C:\path\to\americanness\data\latent gold data\logics.sav'
+
+
+// =====================================================================
+// "What Is Americanness?" -- 5-Class LCR
+// Software: Latent GOLD 6.1 (Academic Version)
+// Input: data/latent gold data/logics.sav; output: main.sav (same folder).
+// LG needs absolute paths: replace C:\path\to in infile and outfile.
+// =====================================================================
+
+model
+options
+   maxthreads=all;
+   algorithm 
+      tolerance=1e-08 emtolerance=0.01 emiterations=250 nriterations=50 ;
+   startvalues
+      seed=905 sets=16 tolerance=1e-05 iterations=50;
+   bayes
+      categorical=1 variances=1 latent=1 poisson=1;
+   montecarlo
+      seed=0 sets=0 replicates=500 tolerance=1e-08;
+   quadrature  nodes=10;
+   missing  includeall;
+   output      
+      parameters=first marginaleffects  betaopts=zl standarderrors profile probmeans=posterior
+      classification estimatedvalues=regression predictionstatistics reorderclasses;
+   outfile  'C:\path\to\americanness\data\latent gold data\main.sav'
+       classification=posterior prediction;
+variables
+   caseid responseid;
+   caseweight adj_weight;
+   dependent dva;
+   independent race nominal, familybackground nominal, religion nominal,
+      englishfluency nominal, politicalideology nominal, civicengagement nominal,
+      favoriteholiday nominal, education nominal, residence nominal;
+   latent
+      Class nominal 5;
+equations
+   Class <- 1;
+   dva <- 1 | Class + race | Class + familybackground | Class + religion | Class + englishfluency | Class + politicalideology | Class + civicengagement | Class + favoriteholiday | Class + education | Class + residence | Class;
+end model

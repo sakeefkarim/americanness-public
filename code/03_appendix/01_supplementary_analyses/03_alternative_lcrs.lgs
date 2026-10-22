@@ -1,0 +1,87 @@
+//LG6.1//
+version = 6.1
+infile 'C:\path\to\americanness\data\latent gold data\logics.sav'
+
+
+// =====================================================================
+// "What Is Americanness?" -- Supplementary LCRs
+// Software: Latent GOLD 6.1 (Academic Version)
+// Input: data/latent gold data/logics.sav; outputs: six_posteriors.sav and
+//   three_re_posteriors.sav (data/latent gold data/2_supplementary_data/).
+// LG needs absolute paths: replace C:\path\to in infile and both outfiles.
+// =====================================================================
+
+// ============================================================
+// Supplementary Model 1: Six-Class (no random effect)
+// ============================================================
+model
+title 'Six-Class';
+options
+   maxthreads=4;
+   algorithm 
+      tolerance=1e-08 emtolerance=0.01 emiterations=250 nriterations=50 ;
+   startvalues
+      seed=905 sets=16 tolerance=1e-05 iterations=50;
+   bayes
+      categorical=1 variances=1 latent=1 poisson=1;
+   montecarlo
+      seed=0 sets=0 replicates=500 tolerance=1e-08;
+   quadrature  nodes=10;
+   missing  includeall;
+   output      
+      parameters=first marginaleffects  betaopts=zl standarderrors profile probmeans=posterior
+      classification estimatedvalues=regression predictionstatistics reorderclasses;
+   outfile 'C:\path\to\americanness\data\latent gold data\2_supplementary_data\six_posteriors.sav'
+       classification=posterior prediction;
+variables
+   caseid responseid;
+   caseweight adj_weight;
+   dependent dva;
+   independent race nominal, familybackground nominal, religion nominal,
+      englishfluency nominal, politicalideology nominal, civicengagement nominal,
+      favoriteholiday nominal, education nominal, residence nominal;
+   latent
+      Class nominal 6;
+equations
+   Class <- 1;
+   dva <- 1 | Class + race | Class + familybackground | Class + religion | Class + englishfluency | Class + politicalideology | Class + civicengagement | Class + favoriteholiday | Class + education | Class + residence | Class;
+end model
+
+
+// ================================================================
+// Supplementary Model 2: Three-Class with Random Effect (CFactor1)
+// ================================================================
+model
+title 'Three-Class RE';
+options
+   maxthreads=4;
+   algorithm 
+      tolerance=1e-08 emtolerance=0.01 emiterations=250 nriterations=50 ;
+   startvalues
+      seed=905 sets=16 tolerance=1e-05 iterations=50;
+   bayes
+      categorical=1 variances=1 latent=1 poisson=1;
+   montecarlo
+      seed=0 sets=0 replicates=500 tolerance=1e-08;
+   quadrature  nodes=10;
+   missing  includeall;
+   output      
+      parameters=first marginaleffects betaopts=zwl standarderrors=robust profile probmeans=posterior
+      classification estimatedvalues=regression predictionstatistics reorderclasses;
+   outfile 'C:\path\to\americanness\data\latent gold data\2_supplementary_data\three_re_posteriors.sav'
+      classification=posterior prediction;
+variables
+   caseid responseid;
+   caseweight adj_weight;
+   dependent dva;
+   independent race nominal, familybackground nominal, religion nominal,
+      englishfluency nominal, politicalideology nominal, civicengagement nominal,
+      favoriteholiday nominal, education nominal, residence nominal;
+   latent
+      CFactor1  continuous, 
+      Class nominal 3;
+equations
+   (1) CFactor1 ;
+   Class <- 1;
+   dva <- 1 | Class + CFactor1 + race | Class + familybackground | Class + religion | Class + englishfluency | Class + politicalideology | Class + civicengagement | Class + favoriteholiday | Class + education | Class + residence | Class;
+end model

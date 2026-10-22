@@ -1,0 +1,45 @@
+//LG6.1//
+version = 6.1
+infile 'C:\path\to\americanness\data\latent gold data\2_supplementary_data\three_re_posteriors_df.sav'
+
+
+// =====================================================================
+// "What Is Americanness?" -- Step-3 Supplementary: Three-Class RE Solution
+// Software: Latent GOLD 6.1 (Academic Version)
+// Input: data/latent gold data/2_supplementary_data/three_re_posteriors_df.sav.
+// LG needs absolute paths: replace C:\path\to in infile.
+// =====================================================================
+
+// ==============================================================
+// Model 2: Predicting Class Membership (Three-Class RE Solution)
+// ==============================================================
+model
+title 'Class Membership (Three-Class RE Solution)';
+options
+   maxthreads=all;
+   algorithm 
+      tolerance=1e-08 emtolerance=0.01 emiterations=250 nriterations=50 ;
+   startvalues
+      seed=905 sets=16 tolerance=1e-05 iterations=50;
+   bayes
+      categorical=1 variances=1 latent=1 poisson=1;
+   montecarlo
+      seed=0 sets=0 replicates=500 tolerance=1e-08;
+   quadrature  nodes=10;
+   missing  excludeall;
+   step3 proportional ml;
+   output      
+      parameters=first  marginaleffects betaopts=zwl standarderrors=robust profile=posterior
+      probmeans=posterior 
+      estimatedvalues=model reorderclasses;
+variables
+   caseid responseid;
+   caseweight adj_weight;
+   independent race nominal, party nominal, generation_coarse nominal,
+      daily_news nominal, university nominal, gender nominal, age, device nominal,
+      religion_coarse nominal, region nominal;
+   latent Cluster  nominal posterior = ( Class#1 Class#2 Class#3) ;
+equations
+   Cluster <- 1 + race + party + generation_coarse + daily_news + university + gender + age + device + religion_coarse + region
+       + age * age;
+end model
