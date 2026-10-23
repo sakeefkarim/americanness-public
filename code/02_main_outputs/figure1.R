@@ -20,7 +20,7 @@ nodes <- tribble(
   "X",  1.8,  3.2,  "italic(X)",              21,
   "z1", 0,    2,    "italic(z)[1*italic(t)]", 22,
   "z2", 0,    1,    "italic(z)[2*italic(t)]", 22,
-  "zk", 0,   -0.5,  "italic(z)[italic(kt)]",  22,
+  "zk", 0,   -0.5,  "italic(z)[italic(jt)]",  22,
   "y",  3.5,  1,    "italic(y)[italic(t)]",   22
 )
 

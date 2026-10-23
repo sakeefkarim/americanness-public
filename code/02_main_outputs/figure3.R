@@ -47,7 +47,7 @@ figure3_left <- distal_outcome_1 |>
     colour = "white",
     fill = "#CF4E9CFF"
   ) +
-  labs(x = "Average Marginal Effect of Class Membership on<br>Pro-Immigrant Sentiment", y = "") +
+  labs(x = "AME of Class Membership on Pro-Immigrant Sentiment", y = "") +
   theme_ipsum(
     base_family = "Montserrat",
     grid = "XY",
@@ -101,12 +101,29 @@ figure3_right <- distal_outcome_pred |>
 
 # STITCH TOGETHER ---------------------------------------------------------
 
-figure_3 <- figure3_left + wrap_table(figure3_right, panel = "rows", space = "full")
+
+tags <- c("**A:**&emsp;**Average Marginal Effects (AME)**",
+  "**B:**&emsp;**Predicted Values**"
+)
+
+figure_3 <- figure3_left + wrap_table(figure3_right, panel = "rows", space = "full") +
+  plot_annotation(
+    tag_levels = list(tags),
+    theme = theme(plot.margin = margin(5.5, 5.5, 0, 5.5))
+  ) &
+  theme(
+    plot.margin = margin(5.5, 5.5, 0, 5.5),
+    plot.tag.location = "plot",
+    plot.tag.position = c((30 / 72.27) / 12.35, 1.2),
+    plot.tag = element_markdown(
+      family = "Montserrat", size = 15, hjust = 0, vjust = 1
+    )
+  )
 
 ggsave(
   figure_3,
   filename = "./figures_tables/figure3.png",
   dpi = 1000,
   width = 12.35,
-  height = 3.75
+  height = 3.85
 )
